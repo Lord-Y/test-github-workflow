@@ -17,25 +17,37 @@ jobs:
           - "1.25.3"
 
     steps:
-      - uses: actions/checkout@v2
-
       - name: Set up Go environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
 
       - name: Print env variables
         run: |
+          go version
           env
 
       - name: Publish release
         run: |
           go install github.com/github-release/github-release@latest
           PRE_RELEASE_RE="^v[0-9]+\.[0-9]+\.[0-9]+-(.*)$"
+          GITHUB_REPOSITORY_NAME=${GITHUB_REPOSITORY##*/}
+
           if [[ "${GITHUB_REF_NAME}" =~ ${PRE_RELEASE_RE} ]]
           then
             MD_RELEASE_FILE="${GITHUB_REF_NAME%-*}"
-            github-release release --pre-release --tag "${GITHUB_REF_NAME}" --description "$(cat changelog/${MD_RELEASE_FILE}.md)"
+            github-release release \
+            --pre-release \
+            --tag "${GITHUB_REF_NAME}" \
+            --user "${GITHUB_REPOSITORY_OWNER}" \
+            --repo "${GITHUB_REPOSITORY_NAME}" \
+            --target "${GITHUB_SHA}" \
+            --description "$(cat changelog/${MD_RELEASE_FILE}.md)"
           else
-            github-release release --tag "${GITHUB_REF_NAME}" --description "$(cat changelog/${GITHUB_REF_NAME}.md)"
+            github-release release \
+            --tag "${GITHUB_REF_NAME}" \
+            --user "${GITHUB_REPOSITORY_OWNER}" \
+            --repo "${GITHUB_REPOSITORY_NAME}" \
+            --target "${GITHUB_SHA}" \
+            --description "$(cat changelog/${GITHUB_REF_NAME}.md)"
           fi
