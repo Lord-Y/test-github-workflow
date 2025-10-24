@@ -24,6 +24,10 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
+      - name: Print env variables
+        run: |
+          env
+
       - name: Publish release
         run: |
           go install github.com/github-release/github-release@latest
