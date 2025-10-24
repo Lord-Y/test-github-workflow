@@ -30,6 +30,8 @@ jobs:
           env
 
       - name: Publish release
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           go install github.com/github-release/github-release@latest
           PRE_RELEASE_RE="^v[0-9]+\.[0-9]+\.[0-9]+-(.*)$"
@@ -41,7 +43,7 @@ jobs:
             MD_RELEASE_FILE="${GITHUB_REF_NAME%-*}"
             github-release release \
             --pre-release \
-            --security-token "${{ secrets.RELEASE_TOKEN }}" \
+            --security-token "${RELEASE_TOKEN}" \
             --tag "${GITHUB_REF_NAME}" \
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
@@ -49,7 +51,7 @@ jobs:
             --description "$(cat ${GITHUB_WORKSPACE}/changelog/${MD_RELEASE_FILE}.md)"
           else
             github-release release \
-            --security-token "${{ secrets.RELEASE_TOKEN }}" \
+            --security-token "${RELEASE_TOKEN}" \
             --tag "${GITHUB_REF_NAME}" \
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
