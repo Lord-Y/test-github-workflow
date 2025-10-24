@@ -17,6 +17,8 @@ jobs:
           - "1.25.3"
 
     steps:
+      - uses: actions/checkout@v5
+
       - name: Set up Go environment
         uses: actions/setup-go@v6
         with:
