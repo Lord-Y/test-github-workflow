@@ -1,0 +1,37 @@
+name: Create Release
+
+# tags matching pattern can be found here:
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#filter-pattern-cheat-sheet
+on:
+  push:
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+-*'
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go:
+          - "1.25.3"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Publish release
+        run: |
+          go install github.com/github-release/github-release@latest
+          PRE_RELEASE_RE="^v[0-9]+\.[0-9]+\.[0-9]+-(.*)$"
+          if [[ "${GITHUB_REF_NAME}" =~ ${PRE_RELEASE_RE} ]]
+          then
+            MD_RELEASE_FILE="${GITHUB_REF_NAME%-*}"
+            github-release release --pre-release --tag "${GITHUB_REF_NAME}" --description "$(cat changelog/${MD_RELEASE_FILE}.md)"
+          else
+            github-release release --tag "${GITHUB_REF_NAME}" --description "$(cat changelog/${GITHUB_REF_NAME}.md)"
+          fi
