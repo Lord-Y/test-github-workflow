@@ -38,6 +38,7 @@ jobs:
             MD_RELEASE_FILE="${GITHUB_REF_NAME%-*}"
             github-release release \
             --pre-release \
+            --security-token "${{ secrets.GITHUB_TOKEN }}" \
             --tag "${GITHUB_REF_NAME}" \
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
@@ -45,6 +46,7 @@ jobs:
             --description "$(cat changelog/${MD_RELEASE_FILE}.md)"
           else
             github-release release \
+            --security-token "${{ secrets.GITHUB_TOKEN }}" \
             --tag "${GITHUB_REF_NAME}" \
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
