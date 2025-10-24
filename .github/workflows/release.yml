@@ -43,7 +43,7 @@ jobs:
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
             --target "${GITHUB_SHA}" \
-            --description "$(cat changelog/${MD_RELEASE_FILE}.md)"
+            --description "$(cat ${GITHUB_WORKSPACE}/changelog/${MD_RELEASE_FILE}.md)"
           else
             github-release release \
             --security-token "${{ secrets.RELEASE_TOKEN }}" \
@@ -51,5 +51,5 @@ jobs:
             --user "${GITHUB_REPOSITORY_OWNER}" \
             --repo "${GITHUB_REPOSITORY_NAME}" \
             --target "${GITHUB_SHA}" \
-            --description "$(cat changelog/${GITHUB_REF_NAME}.md)"
+            --description "$(cat ${GITHUB_WORKSPACE}/changelog/${GITHUB_REF_NAME}.md)"
           fi
